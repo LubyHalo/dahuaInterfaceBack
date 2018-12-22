@@ -1,0 +1,23 @@
+E:\个人资料\开发\VS2012\dahua\dahua\bin\Debug\dahua.exe.config
+E:\个人资料\开发\VS2012\dahua\dahua\bin\Debug\dahua.exe
+E:\个人资料\开发\VS2012\dahua\dahua\bin\Debug\dahua.pdb
+E:\个人资料\开发\VS2012\dahua\dahua\obj\Debug\dahua.csprojResolveAssemblyReference.cache
+E:\个人资料\开发\VS2012\dahua\dahua\obj\Debug\dahua.Form1.resources
+E:\个人资料\开发\VS2012\dahua\dahua\obj\Debug\dahua.Properties.Resources.resources
+E:\个人资料\开发\VS2012\dahua\dahua\obj\Debug\dahua.csproj.GenerateResource.Cache
+E:\个人资料\开发\VS2012\dahua\dahua\obj\Debug\dahua.exe
+E:\个人资料\开发\VS2012\dahua\dahua\obj\Debug\dahua.pdb
+E:\个人资料\开发\VS2012\dahua\dahua\bin\Debug\Newtonsoft.Json.dll
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\obj\Debug\dahua.pdb
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\bin\Debug\dahua.pdb
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\obj\Debug\dahua.csprojResolveAssemblyReference.cache
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\obj\Debug\dahua.Form1.resources
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\obj\Debug\dahua.Properties.Resources.resources
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\obj\Debug\dahua.csproj.GenerateResource.Cache
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\bin\Debug\BouncyCastle.Crypto.dll
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\obj\Debug\Interop.MSScriptControl.dll
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\obj\Debug\dahua.csproj.ResolveComReference.cache
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\bin\Debug\dahua.dll.config
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\bin\Debug\dahua.dll
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\obj\Debug\dahua.dll
+D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\bin\Debug\dahua.exe.config
