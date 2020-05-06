@@ -39,36 +39,43 @@ namespace dahua
         public string HTML = "text/html";
     }
    
-    public class dahuajk
+    public class Dahuajk
     {
-        private string _token;
-		private string _userId;
 		public string testString;
         #region 大华接口处理
-        public string Token
-        {
-            get { return _token; }
-        }
-        public dahuajk(string serviceAddress, string loginName, string loginPass, bool isencrypt, bool isTestService=false)
+        // token获取
+        public string Token { get; private set; }
+        // userID获取
+        public string UserID { get; private set; }
+
+        /// <summary>
+        /// 初始化Dahuajk类
+        /// </summary>
+        /// <param name="serviceAddress">服务器地址</param>
+        /// <param name="loginName">登录名</param>
+        /// <param name="loginPass">登陆密码</param>
+        /// <param name="isEncrypted">密码是否加密</param>
+        /// <param name="encryptMode">加密方式(RSA或Base64)</param>
+        public Dahuajk(string serviceAddress, string loginName, string loginPass, bool isEncrypted, string encryptMode = "Base64")
         {
             string publicKey = "";
-            if (isTestService)
+            if (encryptMode == "RSA")
             {
                 publicKey = getPublicKey(serviceAddress + @"/getPublicKey", JsonConvert.SerializeObject(new { loginName = loginName }));
             }
-            string pwd = isencrypt == true ? loginPass : (isTestService ? RSAEncrypt(publicKey, loginPass) : Base64Encode(loginPass));
+            string pwd = isEncrypted == true ? loginPass : (encryptMode == "RSA" ? RSAEncrypt(publicKey, loginPass) : Base64Encode(loginPass));
             string _para = @"{""loginName"":""" + loginName + @""",""loginPass"":""" + pwd + @"""}";
 			getToken(serviceAddress + @"/login", _para);
         }
         public void getToken(string serviceAddress, string para)
-        {            
+        {
             string _json= PostFunction(serviceAddress, para);
 			JObject loginResObj = JObject.Parse(_json);
 			//Regex reg = new Regex(@"""token"":""(\w+)");            
    //         Match match = reg.Match(_json);
             //_token = match.Groups[1].Value;
-			_token = loginResObj["token"].ToString();
-			_userId = loginResObj["id"].ToString();
+			Token = loginResObj["token"].ToString();
+			UserID = loginResObj["id"].ToString();
 		}
         // 获取登录publicKey，用于加密
         public string getPublicKey(string serviceAddress, string para)
@@ -85,7 +92,7 @@ namespace dahua
 		// 获取加密后的密码
 		public string getRSAEncryptPassWord(string url, string content)
 		{
-			string data = GetFunction(url + "?token=" + _token, "");
+			string data = GetFunction(url + "?token=" + Token, "");
 			JObject jobj = JObject.Parse(data);
 			string publicKey = jobj["data"].ToString();
 			string encryptString = RSAEncrypt(publicKey, content);
@@ -293,7 +300,7 @@ namespace dahua
                 string encoding = response.ContentEncoding;
                 if (encoding == null || encoding.Length < 1)
                 {
-                    encoding = "UTF-8"; //默认编码  
+                    encoding = "UTF-8"; //默认编码
                 }
                 StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(encoding));
                 string retString = reader.ReadToEnd();
@@ -348,19 +355,62 @@ namespace dahua
         #endregion 调用url接口
 
         #region XML处理函数
+        /// <summary>
+        /// 将XML转为字符串
+        /// </summary>
+        /// <param name="xmlDoc"></param>
+        /// <returns></returns>
         public string ConvertXmlToString(XmlDocument xmlDoc)
         {
             MemoryStream stream = new MemoryStream();
             XmlTextWriter writer = new XmlTextWriter(stream, null);
             writer.Formatting = System.Xml.Formatting.Indented;
             xmlDoc.Save(writer);
-            StreamReader sr = new StreamReader(stream, System.Text.Encoding.UTF8);
+            StreamReader sr = new StreamReader(stream, Encoding.UTF8);
             stream.Position = 0;
             string xmlString = sr.ReadToEnd();
             sr.Close();
             stream.Close();
             return xmlString;
         }
+        /// <summary>
+        /// 将Json字符串转为XML
+        /// </summary>
+        /// <param name="jsonString"></param>
+        /// <returns></returns>
+        public string ConvertJsonToXml(string jsonString, string rootName = "root")
+        {
+            XmlDocument xmlDoc = JsonConvert.DeserializeXmlNode(jsonString, rootName);
+            //未格式化XML
+            //string xmlString = xmlDoc.OuterXml;
+            //格式化XML
+            MemoryStream stream = new MemoryStream();
+            XmlTextWriter writer = new XmlTextWriter(stream, null);
+            writer.Formatting = System.Xml.Formatting.Indented;
+            xmlDoc.Save(writer);
+            StreamReader sr = new StreamReader(stream, Encoding.UTF8);
+            stream.Position = 0;
+            string xmlString = sr.ReadToEnd();
+            sr.Close();
+            stream.Close();
+            return xmlString;
+        }
+        /// <summary>
+        /// 将XML字符串转为Json
+        /// </summary>
+        /// <param name="xmlString"></param>
+        /// <param name="rootNodeName"></param>
+        /// <returns></returns>
+        public string ConvertXmlToJson(string xmlString, string rootNodeName= "root")
+        {
+            string result = null;
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.LoadXml(xmlString);
+            XmlNode node = xmldoc.SelectSingleNode(rootNodeName);
+            result = JsonConvert.SerializeXmlNode(node);
+            return result;
+        }
+
         /// <summary>
         /// 将xml转为Datable
         /// </summary>
@@ -456,8 +506,10 @@ namespace dahua
         /// <summary>
         /// 以POST方式请求返回数据
         /// </summary>
-        /// <param name="serviceAddress"></param>
-        /// <param name="param"></param>
+        /// <param name="baseUrl">服务器地址</param>
+        /// <param name="serviceAddress">方法名称</param>
+        /// <param name="param">参数（对象）</param>
+        /// <param name="hasUserId">是否带userID进行请求</param>
         /// <returns></returns>
         public string doRequestWithPost(string baseUrl, string serviceAddress, object param, bool hasUserId=false)
         {
@@ -469,11 +521,66 @@ namespace dahua
                 }
                 string paramString = JsonConvert.SerializeObject(param);
 				//return _token;
-				//return _userId;
+				//return UserID;
 				//return paramString;
-				string _json = hasUserId ? PostFunction(baseUrl + serviceAddress + "?token=" + _token + "&userId=" + _userId, paramString) : PostFunction(baseUrl + serviceAddress + "?token=" + _token, paramString);
-                XmlDocument doc = JsonConvert.DeserializeXmlNode(_json, "root");
-                return ConvertXmlToString(doc);
+				string _json = hasUserId ? PostFunction(baseUrl + serviceAddress + "?token=" + Token + "&userId=" + UserID, paramString) : PostFunction(baseUrl + serviceAddress + "?token=" + Token, paramString);
+                //return ConvertXmlToString(doc);
+                return ConvertJsonToXml(_json);
+                //return ConvertXmlToJson(ConvertJsonToXml(_json));
+            }
+            catch (Exception e)
+            {
+                return "运行出错，错误信息为：" + e.Message;
+            }
+        }
+        /// <summary>
+        /// 以POST方式请求返回数据
+        /// </summary>
+        /// <param name="baseUrl">服务器地址</param>
+        /// <param name="serviceAddress">方法名称</param>
+        /// <param name="param">参数（字符串）</param>
+        /// <param name="hasUserId">是否带userID进行请求</param>
+        /// <returns></returns>
+        public string doRequestWithPost(string baseUrl, string serviceAddress, string param, bool hasUserId = false)
+        {
+            try
+            {
+                if (serviceAddress == "")
+                {
+                    return "请求接口不能为空，请检查！";
+                }
+                //string paramString = JsonConvert.SerializeObject(param);
+                //return _token;
+                //return UserID;
+                //return paramString;
+                string _json = hasUserId ? PostFunction(baseUrl + serviceAddress + "?token=" + Token + "&userId=" + UserID, param) : PostFunction(baseUrl + serviceAddress + "?token=" + Token, param);
+                //return ConvertXmlToString(doc);
+                return ConvertJsonToXml(_json);
+                //return ConvertXmlToJson(ConvertJsonToXml(_json));
+            }
+            catch (Exception e)
+            {
+                return "运行出错，错误信息为：" + e.Message;
+            }
+        }
+        /// <summary>
+        /// 以POST方式请求返回数据
+        /// </summary>
+        /// <param name="serviceAddress">请求完整地址</param>
+        /// <param name="param">参数（字符串）</param>
+        /// <param name="hasUserId">是否带userID进行请求</param>
+        /// <returns></returns>
+        public string doRequestWithPost(string serviceAddress, string param, bool hasUserId = false)
+        {
+            try
+            {
+                if (serviceAddress == "")
+                {
+                    return "请求接口不能为空，请检查！";
+                }
+                string _json = hasUserId ? PostFunction(serviceAddress + "?token=" + Token + "&userId=" + UserID + "&", param) : PostFunction(serviceAddress + "?token=" + Token + "&", param);
+                return ConvertJsonToXml(_json);
+                //return ConvertXmlToJson(ConvertJsonToXml(_json));
             }
             catch (Exception e)
             {
@@ -484,8 +591,10 @@ namespace dahua
         /// <summary>
         /// 以GET方式请求返回数据
         /// </summary>
-        /// <param name="serviceAddress"></param>
-        /// <param name="param"></param>
+        /// <param name="baseUrl">服务器地址</param>
+        /// <param name="serviceAddress">方法名称</param>
+        /// <param name="param">参数（对象）</param>
+        /// <param name="hasUserId">是否带userID进行请求</param>
         /// <returns></returns>
         public string doRequestWithGet(string baseUrl, string serviceAddress, object param, bool hasUserId = false)
         {
@@ -501,9 +610,58 @@ namespace dahua
                     paramString += "&" + item.Name + "=" + item.GetValue(param).ToString();
                 }
 				//return getParamString;
-				string _json = hasUserId ? GetFunction(baseUrl + serviceAddress + "?token=" + _token + "&userId=" + _userId, paramString) : GetFunction(baseUrl + serviceAddress + "?token=" + _token, paramString);
-				XmlDocument doc = JsonConvert.DeserializeXmlNode(_json, "root");
-                return ConvertXmlToString(doc);
+				string _json = hasUserId ? GetFunction(baseUrl + serviceAddress + "?token=" + Token + "&userId=" + UserID, paramString) : GetFunction(baseUrl + serviceAddress + "?token=" + Token, paramString);
+				//XmlDocument doc = JsonConvert.DeserializeXmlNode(_json, "root");
+                return ConvertJsonToXml(_json);
+            }
+            catch (Exception e)
+            {
+                return "运行出错，错误信息为：" + e.Message;
+            }
+        }
+        /// <summary>
+        /// 以GET方式请求返回数据
+        /// </summary>
+        /// <param name="baseUrl">服务器地址</param>
+        /// <param name="serviceAddress">方法名称</param>
+        /// <param name="param">参数（字符串）</param>
+        /// <param name="hasUserId">是否带userID进行请求</param>
+        /// <returns></returns>
+        public string doRequestWithGet(string baseUrl, string serviceAddress, string param, bool hasUserId = false)
+        {
+            try
+            {
+                if (serviceAddress == "")
+                {
+                    return "请求接口不能为空，请检查！";
+                }
+                string _json = hasUserId ? GetFunction(baseUrl + serviceAddress + "?token=" + Token + "&userId=" + UserID + "&", param) : GetFunction(baseUrl + serviceAddress + "?token=" + Token + "&", param);
+                //XmlDocument doc = JsonConvert.DeserializeXmlNode(_json, "root");
+                return ConvertJsonToXml(_json);
+            }
+            catch (Exception e)
+            {
+                return "运行出错，错误信息为：" + e.Message;
+            }
+        }
+        /// <summary>
+        /// 以GET方式请求返回数据
+        /// </summary>
+        /// <param name="serviceAddress">请求完整地址</param>
+        /// <param name="param">参数（字符串）</param>
+        /// <param name="hasUserId">是否带userID进行请求</param>
+        /// <returns></returns>
+        public string doRequestWithGet(string serviceAddress, string param, bool hasUserId = false)
+        {
+            try
+            {
+                if (serviceAddress == "")
+                {
+                    return "请求接口不能为空，请检查！";
+                }
+                string _json = hasUserId ? GetFunction(serviceAddress + "?token=" + Token + "&userId=" + UserID + "&", param) : GetFunction(serviceAddress + "?token=" + Token + "&", param);
+                //XmlDocument doc = JsonConvert.DeserializeXmlNode(_json, "root");
+                return ConvertJsonToXml(_json);
             }
             catch (Exception e)
             {
@@ -512,38 +670,13 @@ namespace dahua
         }
         #endregion
 
-        #region 调用js代码
-        //string _MD5_js = "MD5.js";
-        public object EncryWithScript(string funcName, string argument, string jsPath = "../../jsEncrypt/jsencrypt.min.js")
+        #region 格式化请求结果
+        public string FormattingJsonString (string jsonString)
         {
-            string js = File.ReadAllText(jsPath);
-            object o = ExecuteScript(string.Format("{0}('{1}')", funcName, argument), js);
-            return o;
-        }
 
-        /// <summary>
-        /// 执行JS
-        /// </summary>
-        /// <param name="sExpression">参数体</param>
-        /// <param name="sCode">JavaScript代码的字符串</param>
-        /// <returns></returns>
-        private object ExecuteScript(string sExpression, string sCode)
-        {
-            MSScriptControl.ScriptControl scriptControl = new MSScriptControl.ScriptControl();
-            scriptControl.UseSafeSubset = true;
-            scriptControl.Language = "JScript";
-            scriptControl.AddCode(sCode);
-            try
-            {
-                return scriptControl.Eval(sExpression);
-            }
-            catch (Exception ex)
-            {
-
-            }
-            return null;
+            return "";
         }
         #endregion
 
-}
+    }
 }

@@ -21,3 +21,22 @@ D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\bin\Debug\dahua.dll.config
 D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\bin\Debug\dahua.dll
 D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\obj\Debug\dahua.dll
 D:\Microsoft Visual Studio 14.0\Project\dahua\dahua\bin\Debug\dahua.exe.config
+E:\Workspace\dahuaInterfaceBack\dahua\bin\Debug\dahua.exe.config
+E:\Workspace\dahuaInterfaceBack\dahua\bin\Debug\dahua.exe
+E:\Workspace\dahuaInterfaceBack\dahua\bin\Debug\dahua.pdb
+E:\Workspace\dahuaInterfaceBack\dahua\bin\Debug\BouncyCastle.Crypto.dll
+E:\Workspace\dahuaInterfaceBack\dahua\bin\Debug\Newtonsoft.Json.dll
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\dahua.csprojAssemblyReference.cache
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\Interop.MSScriptControl.dll
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\dahua.csproj.ResolveComReference.cache
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\dahua.Form1.resources
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\dahua.Properties.Resources.resources
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\dahua.csproj.GenerateResource.cache
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\dahua.csproj.CoreCompileInputs.cache
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\dahua.csproj.CopyComplete
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\dahua.exe
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\dahua.pdb
+E:\Workspace\dahuaInterfaceBack\dahua\bin\Debug\Interop.WMPLib.dll
+E:\Workspace\dahuaInterfaceBack\dahua\bin\Debug\AxInterop.WMPLib.dll
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\Interop.WMPLib.dll
+E:\Workspace\dahuaInterfaceBack\dahua\obj\Debug\AxInterop.WMPLib.dll

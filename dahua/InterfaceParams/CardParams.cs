@@ -10,9 +10,9 @@ namespace dahua.InterfaceParams
     class CardParams
     {
         //public string baseUrl = "http://10.100.4.14/CardSolution";
-        public string baseUrl = "http://60.191.94.122:9331/CardSolution";
+        public string baseUrl = "http://10.100.47.20/CardSolution";
 
-		private dahuajk dhjk = new dahuajk("http://60.191.94.122:9331/WPMS", "8900yanshi", "8900yanshi1", false, true);
+		private Dahuajk dhjk = new Dahuajk("http://10.100.47.20/WPMS", "黄璐", "zpcxxb3467", false);
 		public string getPwd(string content)
 		{
 			return dhjk.getRSAEncryptPassWord(baseUrl + "/rsa/getPubKey", content);

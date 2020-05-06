@@ -23,14 +23,14 @@ namespace dahua
         {
             InitializeComponent();
         }
-        private dahuajk jk;
+        private Dahuajk jk;
         private string baseUrl;
         private Dictionary<string, baseParamModels> paramDict;
 
         #region 图片流转换测试
         private void button2_Click(object sender, EventArgs e)
         {
-            jk = new dahuajk("http://10.100.4.14/WPMS/login", "system", "admin123", false);
+            jk = new Dahuajk("http://10.100.4.14/WPMS/login", "system", "admin123", false);
             string url;
             string _json;
             //url = "http://10.100.4.14/CardSolution/card/accessControl/device/bycondition/combined";
@@ -80,7 +80,7 @@ namespace dahua
         private void Form1_Load(object sender, EventArgs e)
         {
             //jk = new dahuajk("http://10.100.4.14/WPMS", "system", "admin123", false);
-            jk = new dahuajk("http://60.191.94.122:9331/WPMS", "8900yanshi", "8900yanshi1", false, true);
+            jk = new Dahuajk("http://10.100.47.20/WPMS", "黄璐", "zpcxxb3467", false);
             CardParams cardParams = new CardParams();
             paramDict = jk.getParamDict(cardParams.modelList());
             baseUrl = cardParams.baseUrl;

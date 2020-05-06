@@ -10,8 +10,8 @@ namespace dahua.Card
 {
     class AccessControl
     {
-        private dahuajk _jk;
-        public AccessControl(dahuajk dahuajk)
+        private Dahuajk _jk;
+        public AccessControl(Dahuajk dahuajk)
         {
             _jk = dahuajk;
         }
